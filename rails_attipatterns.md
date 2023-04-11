@@ -9,10 +9,10 @@
 
 ## Chapter 1 Model
 
-* AntiPattern: Voyeuristic Models
-* AntiPattern: Fat Models
-* AntiPattern: Spaghetti SQL
-* AntiPattern: Duplicate Code Duplication
+* [AntiPattern: Voyeuristic Models](rails_antipattern_ch1_voyeuristic_models.md)
+* [AntiPattern: Fat Models](rails_antipattern_ch1_fat_models.md)
+* [AntiPattern: Spaghetti SQL](rails_antipattern_ch1_spaghetti_sql.md)
+* [AntiPattern: Duplicate Code Duplication](rails_antipattern_ch1_duplicate_code.md)
 
 ## Chapter 2 Domain Modeling
 
