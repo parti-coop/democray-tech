@@ -174,7 +174,7 @@ end
 
 ## Solution: Keep Finders on Their Own Model
 
-1. scope를 연관 모델로 옮긴다.
+### 대안 1. scope를 연관 모델로 옮긴다.
 
 ```ruby
 
@@ -194,5 +194,30 @@ class Membership < ActiveRecord::Base
 end
 
 ```
+>  Rails에서는 scope를 제공합니다. 추후 다른 안티 모델(ex: [ch1 spaghetti_sql](rails_antipattern_ch1_spaghetti_sql.md))에서 설명합니다.
 
 "AssociationProxy 매직"을 사용합니다. 이 magic은 연결된 레코드 간의 원활한 상호 작용을 허용하는 Rails의 ActiveRecord 연결 동작을 나타냅니다. "belongs to" 또는 "has many" 관계와 같은 두 모델 사이에 연관이 정의되면 Rails는 두 모델 사이에서 중개자 역할을 하는 "association proxy" 객체를 생성합니다. 이 프록시 개체를 사용하면 복잡한 SQL 쿼리를 작성하거나 데이터베이스 스키마의 세부 정보를 처리하지 않고도 연결된 레코드에 쉽게 액세스하고 조작할 수 있습니다.
+
+예를 들어 `Posts`에 많은 `User` 모델이 있는 경우 `user.posts`를 호출하여 사용자의 게시물에 쉽게 액세스할 수 있습니다. 배후에서 Rails는 연결 프록시를 사용하여 데이터베이스에서 게시물을 검색하고 컬렉션으로 반환합니다. 마찬가지로 새 게시물 레코드를 만들고 사용자와 자동으로 연결하는 'user.posts.create'를 호출하여 사용자 컬렉션에 새 게시물을 추가할 수 있습니다.
+
+### 대안 2. 각각의 모델을 참조하는 대신, scope는 현재 모델에 어떤 특정 정의를 내릴 수 있게 한다.
+
+아래에 각 정의된 scope를 연달아 쓴 것을 보면서 이해해봅니다.
+
+```ruby
+# Alternative 2
+class User < ActiveRecord::Base
+    has_many :memberships
+    def find_recent_active_memberships
+        memberships.only_active.order_by_activity.limit(5)
+    end
+end
+
+class Membership < ActiveRecord::Base
+    belongs_to :user
+    scope :only_active, where(:active => true)
+    scope :order_by_activity, order('last_active_on DESC')
+end
+
+```
+
