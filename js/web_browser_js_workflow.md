@@ -1,4 +1,4 @@
-# 웹 브라우저에서의 JS 동작 방식
+# 웹브라우저 JS에서 비동기처리하는 방법
 
 Javascript는 싱글 스레드입니다. 싱글 스레드라서 한 번에 하나의 일 밖에 처리하지 못하는 단점이 있습니다. 하지만 여러 일을 한번에 처리할 수 있는 멀티쓰레드 방식을 사용하면 데드락과 같은 동시성 문제에 대한 처리가 설계에 포함되어야 합니다. 설계가 복잡해지고 언어 구현이 어렵기 때문에 간단한 스크립트 목적에는 부합하지 않아 싱글 스레드를 채택한걸로 추측해봅니다. [Why JavaScript is a single-thread language that can be non-blocking?, geeksforgeeks.org](https://www.geeksforgeeks.org/why-javascript-is-a-single-thread-language-that-can-be-non-blocking/)
 
