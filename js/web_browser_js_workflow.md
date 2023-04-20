@@ -15,6 +15,33 @@ JS는 웹 브라우저에서 많이 사용되고 있습니다. JS를 사용하�
 - Event Loop: Task Queue 에 있는 Task를 JS의 Call Stack 에 등록하는 역할. JS 엔진의 Call Stack을 관찰하다가 비워지면, Task Queue의 Task을 Call Stack에 등록합니다.
 - Call Stack: JS 엔진 스레드가 실행하는 콜스택.
 
-동작 방식을 알기위해 하나의 예를 들어 보겠습니다. 비동기통신을 위해 xhr() 함수를 실행시키면 Web API 에서 네트워크 통신을 시작합니다. 이 처리는 웹브라우저의 멀티쓰레드 중 한 쓰레드가 담당합니다. JS 스레드는 비동기함수 말고 콜스택에 쌓인 함수를 처리합니다. Web API 의 xhr 통신이 끝나면 xhr 에 등록한 콜백함수를 Task Queue에 등록합니다. xhr 콜백함수는 큐에서 대기합니다. Event Loop 에서 Call Stack 이 드디어 비워졌다는 걸 알고 큐에 있던 xhr 콜백함수를 Call Stack 에 등록합니다. 그리고 JS 엔진의 스레드가 콜스택에 쌓인 xhr 콜백함수를 처리합니다. [어쨌든 이벤트 루프는 무엇입니까? | Philip Roberts | JSConf EU](http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D)
+동작 방식을 알기위해 하나의 예를 들어 보겠습니다.
+
+1. 비동기통신을 위해 xhr() 함수를 실행시키면 Web API 에서 네트워크 통신을 시작합니다. 이 처리는 웹브라우저의 멀티쓰레드 중 한 쓰레드가 담당합니다. JS 스레드는 비동기함수 말고 콜스택에 쌓인 함수를 처리합니다.
+
+2. Web API 의 xhr 통신이 끝나면 xhr 에 등록한 콜백함수를 Task Queue에 등록합니다.
+
+3. xhr 콜백함수는 큐에서 대기합니다.
+
+4. Event Loop 에서 Call Stack 이 드디어 비워졌다는 걸 알고 큐에 있던 xhr 콜백함수를 Call Stack 에 등록합니다.
+
+5. 그리고 JS 엔진의 스레드가 콜스택에 쌓인 xhr 콜백함수를 처리합니다.
+
+[어쨌든 이벤트 루프는 무엇입니까? | Philip Roberts | JSConf EU](http://latentflip.com/loupe/?code=JC5vbignYnV0dG9uJywgJ2NsaWNrJywgZnVuY3Rpb24gb25DbGljaygpIHsKICAgIHNldFRpbWVvdXQoZnVuY3Rpb24gdGltZXIoKSB7CiAgICAgICAgY29uc29sZS5sb2coJ1lvdSBjbGlja2VkIHRoZSBidXR0b24hJyk7ICAgIAogICAgfSwgMjAwMCk7Cn0pOwoKY29uc29sZS5sb2coIkhpISIpOwoKc2V0VGltZW91dChmdW5jdGlvbiB0aW1lb3V0KCkgewogICAgY29uc29sZS5sb2coIkNsaWNrIHRoZSBidXR0b24hIik7Cn0sIDUwMDApOwoKY29uc29sZS5sb2coIldlbGNvbWUgdG8gbG91cGUuIik7!!!PGJ1dHRvbj5DbGljayBtZSE8L2J1dHRvbj4%3D) 사이트에서 동작방식 설명을 참고하였으며, 온라인으로 직접 코딩해서 각 주인공들이 어떻게 동작하는지 그림으로 볼 수 있습니다.
 
 이런 원리를 알고 있다면, 처리시간이 오래 걸리는 특정 로직을 setTimeout 콜백으로 해두고 시간 0으로 설정해서 비동기처리 되도록하면 다른 로직들을 먼저 처리하고 맨 나중에 처리시간이 오래걸리는 콜백 로직을 실행할 수 있습니다.
+
+```
+console.log("A");
+window.setTimeout(()=>{
+  console.log("B, long time task");
+} , 0 )
+console.log("C");
+```
+
+```
+출력
+"A"
+"C"
+"B, long time task"
+```
